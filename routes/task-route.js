@@ -6,6 +6,7 @@ import {
   getTaskById,
   updateTaskById,
   deleteTaskById,
+  getTasksWithQueryParams,
 } from "../controller/task-controller.js";
 import { isAuth } from "../helper/isAuth.js";
 
@@ -28,5 +29,7 @@ taskRouter.patch("/update/:id", updateTaskById);
 // router for deleting a task
 // task/delete/:id
 taskRouter.delete("/delete/:id", deleteTaskById);
+taskRouter.get("/getTasksWithQueryParams", getTasksWithQueryParams);
+
 
 export default taskRouter;

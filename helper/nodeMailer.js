@@ -135,7 +135,7 @@ const htmlContentInRePassLineCSS = code => {
     </head>
     <body>
       <div class="container">
-        <h1>Welcome in Coonex Organization</h1>
+        <h1>Welcome in Rmoz Organization</h1>
         <h2>Rest Password code : <span id="code">${code}</span></h2>
         <button onClick>Rest Password</button>
 
@@ -537,11 +537,11 @@ const htmlContentForPasswordChangeEmail = () => {
           <h2>Your Password Has Been Successfully Updated</h2>
           <p>Hello,</p>
           <p>We wanted to inform you that your password has been successfully changed. If you made this change, no further action is required.</p>
-          <p>If you did not change your password, please <a href="http://crm.coonex.io/reset-password" style="color: #007bff; text-decoration: none;">reset your password immediately</a> or contact our support team.</p>
+          <p>If you did not change your password, please <a href="" style="color: #007bff; text-decoration: none;">reset your password immediately</a> or contact our support team.</p>
         </div>
         <div class="footer">
           <p>If you have any questions or need assistance, feel free to <a href="mailto:support@coonex.org" style="color: #007bff; text-decoration: none;">contact our support team</a>.</p>
-          <p>&copy; 2024 Coonex Organization. All rights reserved.</p>
+          <p>&copy; 2024 Rmoz Organization. All rights reserved.</p>
         </div>
       </div>
     </body>
@@ -852,11 +852,11 @@ const htmlForActivationEmail = () => {
       </div>
     </div>
   </body>
-</html>`;
-};
+</html>`
+}
 
 const htmlContentForTwoFactorAuth = code => {
-    return `
+  return `
     <html>
       <head>
         <style>
@@ -905,10 +905,8 @@ const htmlContentForTwoFactorAuth = code => {
         </div>
       </body>
     </html>
-    `;
-  };
-  
-
+    `
+}
 
 export {
   sendActiveEmail,
@@ -924,4 +922,3 @@ export {
   htmlForActivationEmail,
   htmlContentForTwoFactorAuth
 }
-

@@ -1,89 +1,85 @@
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose'
 
 const userSchema = new Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: true
     },
     email: {
       type: String,
-      required: true,
+      required: true
     },
     password: {
       type: String,
-      required: true,
+      required: true
     },
     role: {
       type: String,
-      default: "user",
+      default: 'user'
     },
     twoFactorAuth: {
       type: Boolean,
-      default: false,
+      default: false
     },
     twoFactorAuthCode: {
-      type: String,
+      type: String
     },
     changedPasswordAt: {
       type: Date,
-      required: false,
+      required: false
     },
     changedPasswordCode: {
       type: String,
-      required: false,
+      required: false
     },
     // Add more fields as needed
-    active: {
-      type: Boolean,
-      default: true,
-    },
-    phoneNumber: {
-      type: String,
-      required: true,
-    },
 
     isEmailVerified: {
       type: Boolean,
       required: false,
-      default: false,
+      default: false
     },
     activationCode: {
       type: String,
       required: false,
-      default: null,
+      default: null
     },
     reToken: {
       type: String,
       required: false,
-      default: null,
+      default: null
     },
     forgetPasswordCode: {
       type: String,
       required: false,
-      default: null,
+      default: null
     },
     passwordChangeAt: {
       type: Date,
       required: false,
-      default: null,
+      default: null
     },
-
+    adminId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: false
+    },
     permissions: {
       type: {
         add: { type: Boolean, default: true },
         edit: { type: Boolean, default: true },
         delete: { type: Boolean, default: true },
-        view: { type: Boolean, default: true },
-      },
-    },
+        view: { type: Boolean, default: true }
+      }
+    }
   },
 
   {
-    timestamps: true,
+    timestamps: true
   }
-);
+)
 
-const User = model("User", userSchema);
+const User = model('User', userSchema)
 
-export default User;
+export default User
