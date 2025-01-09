@@ -4,6 +4,8 @@ import connectDB from "./DB/connect-to-DB.js";
 dotenv.config();
 import userRouter from "./routes/user-route.js";
 import taskRouter from "./routes/task-route.js";
+import authRouter from "./routes/auth-route.js";
+import cors from "cors";
 
 const port = process.env.PORT || 3000;
 
@@ -13,11 +15,19 @@ const app = express();
 // create basic express server
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// enable cors    
+app.use(cors({
+  origin: "*",
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: "Content-Type,Authorization",
+}));
+
 connectDB();
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 //
+app.use("/auth", authRouter);
 app.use("/user", userRouter);
 app.use("/task", taskRouter);
 

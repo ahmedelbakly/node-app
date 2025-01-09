@@ -12,24 +12,38 @@ import { isAuth } from "../helper/isAuth.js";
 
 const taskRouter = Router();
 
+// Apply authentication middleware to all routes
+// Middleware: isAuth
 taskRouter.use(isAuth);
 
-// router for creating a new task
-// task/create
+// Route to create a new task
+// Endpoint: POST /task/create
+// Description: Creates a new task with the provided details
 taskRouter.post("/create", createTask);
-// router for getting all tasks
-// task/get-all
-taskRouter.get("/get-all", getAllTasks);
-// router for getting a task by id
-// task/get/:id
-taskRouter.get("/get/:id", getTaskById);
-// router for updating a task
-// task/update/:id
-taskRouter.patch("/update/:id", updateTaskById);
-// router for deleting a task
-// task/delete/:id
-taskRouter.delete("/delete/:id", deleteTaskById);
-taskRouter.get("/getTasksWithQueryParams", getTasksWithQueryParams);
 
+// Route to get all tasks
+// Endpoint: GET /task/get-all
+// Description: Retrieves a list of all tasks
+taskRouter.get("/get-all", getAllTasks);
+
+// Route to get a task by ID
+// Endpoint: GET /task/get/:id
+// Description: Retrieves the details of a specific task using its ID
+taskRouter.get("/get/:id", getTaskById);
+
+// Route to update a task by ID
+// Endpoint: PATCH /task/update/:id
+// Description: Updates the details of a specific task using its ID
+taskRouter.patch("/update/:id", updateTaskById);
+
+// Route to delete a task by ID
+// Endpoint: DELETE /task/delete/:id
+// Description: Deletes a specific task using its ID
+taskRouter.delete("/delete/:id", deleteTaskById);
+
+// Route to get tasks with query parameters
+// Endpoint: GET /task/getTasksWithQueryParams
+// Description: Retrieves tasks based on specific query parameters (e.g., filters or search criteria)
+taskRouter.get("/getTasksWithQueryParams", getTasksWithQueryParams);
 
 export default taskRouter;

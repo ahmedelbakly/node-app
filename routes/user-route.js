@@ -1,49 +1,34 @@
-import express from 'express'
+import express from "express";
 
 import {
-  registerUser,
-  loginUser,
-  activeTwoFactor,
-  checkTwoFactorCode,
   getAllUserController,
-  forgetPassword,
-  resetPassword,
-  checkOtp,
   addNewUser,
-  getAllUserByAdminId
-} from '../controller/user-controller.js'
-import { isAuth } from '../helper/isAuth.js'
-
-const userRouter = express.Router()
-
-// router for user registration
-// user/register
-userRouter.post('/register', registerUser)
-
-// router for user login
-// user/login
-userRouter.post('/login', loginUser)
-
-// router for user active two factor authentication
-// user/active-two-factor
-userRouter.patch('/active-two-factor', isAuth, activeTwoFactor)
-
-// router for user check two factor authentication code
-// user/check-two-factor
-userRouter.post('/check-two-factor', checkTwoFactorCode)
-
-//  getAllUserController
-// user/get-all
-userRouter.get('/get-all', getAllUserController)
-
-//  forgetPassword
-userRouter.post('/auth/forgetPassword', forgetPassword)
-userRouter.post('/verificationCode', isAuth, checkOtp)
-userRouter.post('/resetPassword', isAuth, resetPassword)
-userRouter.post('/add-new-user', isAuth, addNewUser)
-userRouter.get('/get-all-user-by-admin-id', isAuth, getAllUserByAdminId)
-
-export default userRouter
+  getAllUserByAdminId,
+} from "../controller/user-controller.js";
+import { isAuth } from "../helper/isAuth.js";
 
 
-/**** */
+const userRouter = express.Router();
+
+// Route to fetch all users
+// Endpoint: GET /user/get-all
+// Description: Retrieves a list of all users in the system
+userRouter.get("/get-all", getAllUserController);
+
+// Route to add a new user
+// Endpoint: POST /user/add-new-user
+// Description: Allows authenticated users to add a new user
+// Middleware: isAuth
+userRouter.post("/add-new-user", isAuth, addNewUser);
+
+// Route to fetch all users associated with a specific admin
+// Endpoint: GET /user/get-all-user-by-admin-id
+// Description: Retrieves all users that belong to a specific admin (requires authentication)
+// Middleware: isAuth
+userRouter.get("/get-all-user-by-admin-id", isAuth, getAllUserByAdminId);
+
+userRouter.get("/get-all-user-by-admin-id", isAuth, userOnAut);
+
+
+
+export default userRouter;

@@ -43,6 +43,12 @@ export const checkUserRole = (user, role, id = null) => {
   const userCanAccess = user.role === role || user._id === id
   return userCanAccess
 }
+export const checkUserCan = (user, id) => {
+  const userCanAccess = user.id == id
+  return userCanAccess
+}
+
+
 
 
 
