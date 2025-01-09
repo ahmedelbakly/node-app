@@ -44,3 +44,6 @@ userRouter.post('/add-new-user', isAuth, addNewUser)
 userRouter.get('/get-all-user-by-admin-id', isAuth, getAllUserByAdminId)
 
 export default userRouter
+
+
+/**** */
