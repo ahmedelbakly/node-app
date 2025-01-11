@@ -7,10 +7,6 @@ const taskSchema = new Schema(
       type: String,
       required: true
     },
-    description: {
-      type: String,
-      required: true
-    },
     status: {
       type: String,
       default: 'to do',
@@ -18,7 +14,8 @@ const taskSchema = new Schema(
     },
     userId: {
       type: Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
+      required: true
     },
     dueDate: {
       type: Date,
@@ -28,6 +25,11 @@ const taskSchema = new Schema(
       type: String,
       default: 'low',
       enum: ['low', 'medium', 'high']
+    },
+    adminId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
     }
   },
   { timestamps: true }

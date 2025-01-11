@@ -1,72 +1,98 @@
-import { checkUserCan, checkUserRole } from "../helper/authHelpers.js";
+import { checkUserCan, checkUserRole } from '../helper/authHelpers.js'
 import {
   createDocument,
   deleteDocumentById,
   getDocumentById,
   getDocuments,
-  updateDocumentById,
-} from "../helper/crud-helper-functions.js";
-import Task from "../model/task-model.js";
+  updateDocumentById
+} from '../helper/crud-helper-functions.js'
+import { errorResponse, successResponse } from '../helper/responseHelpers.js'
+import Role from '../model/role-model.js'
+import Task from '../model/task-model.js'
+import User from '../model/user-model.js'
+import httpStatus from 'http-status'
 
 // create new task
 const createTask = async (req, res) => {
   // name, description, status, userId
-  const userId = req.user.id;
+  const { id, role } = req.user
 
-  const { name, description, priority = "low", status = "to do",dueDate } = req.body;
-  // fill all the fields
-  if (!name || !description) {
-    return res.status(400).json({
-      message: "Please fill name and description",
-    });
+  const adminId = role === 'admin' ? id : (await User.findById(id))?.adminId
+
+  const { name, priority = 'low', status = 'to do', dueDate, userId } = req.body
+  // fill all the field
+  if (!name || !dueDate) {
+    return errorResponse(res, 'Please enter all fields', httpStatus.BAD_REQUEST)
   }
   if (req.body.dueDate) {
-    const dueDate = new Date(req.body.dueDate);
-    const today = new Date();
+    const dueDate = new Date(req.body.dueDate)
+    const today = new Date()
     if (dueDate < today) {
-      return res.status(400).json({
-        message: "Due date cannot be in the past",
-      });
+      return errorResponse(
+        res,
+        'Due date cannot be in the past',
+        httpStatus.BAD_REQUEST
+      )
     }
   }
 
   try {
     const task = await createDocument(Task, {
       name,
-      description,
       userId,
       status,
       priority,
       dueDate: new Date(dueDate),
-    });
-    return res.status(201).json({
-      message: "Task created successfully",
-    });
+      adminId
+    })
+    successResponse(res, 'Task created successfully', task)
   } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-    });
+    return errorResponse(res, error.message, httpStatus.INTERNAL_SERVER_ERROR)
   }
-};
+}
 
 // get all tasks
 const getAllTasks = async (req, res) => {
+  const { id: userId, role } = req.user
+  const user = await User.findById(userId).select('adminId role')
+  const userPermissions = await Role.findById(user.role)
+
+  const adminId = role === 'admin' ? userId : user?.adminId
+
   try {
+    if (role === 'admin' || userPermissions?.tasks?.add) {
+      const tasks = await getDocuments(
+        Task,
+        { adminId: adminId },
+        { sort: { createdAt: -1 } },
+        '_id name status priority dueDate ',
+        'userId'
+      )
+      return successResponse(
+        res,
+        'Tasks retrieved successfully',
+        tasks,
+        httpStatus.OK
+      )
+    }
+
     const tasks = await getDocuments(
       Task,
-      {},
+      { userId: userId },
       { sort: { createdAt: -1 } },
-      "_id name description status userId"
-    );
-    return res.status(200).json({
+      '_id name  status priority dueDate ',
+      'userId'
+    )
+    return successResponse(
+      res,
+      'Tasks retrieved successfully',
       tasks,
-    });
+      httpStatus.OK
+    )
   } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-    });
+    return errorResponse(res, error.message, httpStatus.INTERNAL_SERVER_ERROR)
   }
-};
+}
 
 // get task by id
 const getTaskById = async (req, res) => {
@@ -74,30 +100,18 @@ const getTaskById = async (req, res) => {
     const task = await getDocumentById(
       Task,
       req.params.id,
-      "_id name description status userId"
-    );
+      '_id name description status priority dueDate ',
+      'userId'
+    )
     if (!task) {
-      return res.status(404).json({
-        message: "Task not found",
-        });
-        }
-    const userCan = checkUserCan(req.user, task.userId);
-    if (!userCan) {
-      return res.status(403).json({
-      message: "You don't have permission to access this task",
-    });
+      return errorResponse(res, 'Task not found', httpStatus.NOT_FOUND)
+    }
 
-  }
-
-    return res.status(200).json({
-      task,
-    });
+    return successResponse(res, 'Task retrieved successfully', task)
   } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-    });
+    return errorResponse(res, error.message, httpStatus.INTERNAL_SERVER_ERROR)
   }
-};
+}
 
 // update task by id
 const updateTaskById = async (req, res) => {
@@ -106,39 +120,30 @@ const updateTaskById = async (req, res) => {
     const task = await getDocumentById(
       Task,
       req.params.id,
-      "_id name description status userId"
-    );
+      '_id name description status priority dueDate '
+    )
     if (!task) {
-      return res.status(404).json({
-        message: "Task not found",
-      });
+      return errorResponse(res, 'Task not found', httpStatus.NOT_FOUND)
     }
-    const userCan = checkUserCan(req.user, task.userId);
-    if (!userCan) {
-      return res.status(403).json({
-        message: "You do not have permission to perform this action",
-      });
-    }
+   
     if (req.body.dueDate) {
-      const dueDate = new Date(req.body.dueDate);
-      const today = new Date();
+      const dueDate = new Date(req.body.dueDate)
+      const today = new Date()
       if (dueDate < today) {
-        return res.status(400).json({
-          message: "Due date cannot be in the past",
-        });
+        return errorResponse(
+          res,
+          'Due date cannot be in the past',
+          httpStatus.BAD_REQUEST
+        )
       }
     }
 
-    await updateDocumentById(Task, req.params.id, req.body);
-    return res.status(200).json({
-      message: "Task updated successfully",
-    });
+    await updateDocumentById(Task, req.params.id, req.body)
+   return successResponse(res, 'Task updated successfully', task)
   } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-    });
+    return errorResponse(res, error.message, httpStatus.INTERNAL_SERVER_ERROR)
   }
-};
+}
 
 // delete task by id
 const deleteTaskById = async (req, res) => {
@@ -147,53 +152,53 @@ const deleteTaskById = async (req, res) => {
     const task = await getDocumentById(
       Task,
       req.params.id,
-      "_id name description status userId"
-    );
+      '_id name description status userId'
+    )
     if (!task) {
       return res.status(404).json({
-        message: "Task not found",
-      });
+        message: 'Task not found'
+      })
     }
-    const userCan = checkUserCan(req.user, task.userId);
+    const userCan = checkUserCan(req.user, task.userId)
 
-    console.log("====================================");
-    console.log({ userCan });
-    console.log("====================================");
+    console.log('====================================')
+    console.log({ userCan })
+    console.log('====================================')
     if (!userCan) {
       return res.status(403).json({
-        message: "You do not have permission to perform this action",
-      });
+        message: 'You do not have permission to perform this action'
+      })
     }
-    await deleteDocumentById(Task, req.params.id);
+    await deleteDocumentById(Task, req.params.id)
     return res.status(200).json({
-      message: "Task deleted successfully",
-    });
+      message: 'Task deleted successfully'
+    })
   } catch (error) {
     return res.status(500).json({
-      message: error.message,
-    });
+      message: error.message
+    })
   }
-};
+}
 // get tasks with Query params
 const getTasksWithQueryParams = async (req, res) => {
   try {
-    const query = req.query;
-    const userCan = checkUserRole(req.user, "admin");
+    const query = req.query
+    const userCan = checkUserRole(req.user, 'admin')
     const tasks = await getDocuments(
       Task,
       query,
       { sort: { createdAt: -1 } },
-      "_id name description status userId"
-    );
+      '_id name description status userId'
+    )
     return res.status(200).json({
-      tasks,
-    });
+      tasks
+    })
   } catch (error) {
     return res.status(500).json({
-      message: error.message,
-    });
+      message: error.message
+    })
   }
-};
+}
 
 export {
   createTask,
@@ -201,5 +206,5 @@ export {
   getTaskById,
   updateTaskById,
   deleteTaskById,
-  getTasksWithQueryParams,
-};
+  getTasksWithQueryParams
+}

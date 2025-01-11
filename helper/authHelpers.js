@@ -40,7 +40,7 @@ export const generateActivationCode = length => {
 
 // check user role
 export const checkUserRole = (user, role, id = null) => {
-  const userCanAccess = user.role === role || user._id === id
+  const userCanAccess = user.role == role || user._id == id
   return userCanAccess
 }
 export const checkUserCan = (user, id) => {
@@ -48,10 +48,38 @@ export const checkUserCan = (user, id) => {
   return userCanAccess
 }
 
+export const getUserPermissions = async (
+  userModel,
+  roleModel,
+  userId,
+  item,
+  action
+) => {
+  try {
+    // Fetch the user by ID
+    const user = await userModel.findOne({ _id: userId })
+    if (!user) {
+      return { error: 'User not found' }
+    }
 
+    // Fetch the role of the user
+    const role = await roleModel.findOne({ _id: user.role })
+    if (!role) {
+      return { error: 'Role not found' }
+    }
 
+    // Check if the item and action exist in the role permissions
+    if (!role[item] || typeof role[item][action] === 'undefined') {
+      return { error: 'Permission not found' }
+    }
 
-
-
+    // Return the permission value
+    return role[item][action] || role.name === 'admin'
+  } catch (error) {
+    // Handle any unexpected errors
+    console.error('Error fetching user permissions:', error)
+    return { error: 'Internal server error' }
+  }
+}
 
 /** test */

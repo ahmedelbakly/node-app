@@ -13,9 +13,7 @@ export const isAuth = (req, res, next) => {
 
   const token = authHeader.split(" ")[1]; // Get the token from "Bearer <token>"
 
-  console.log('====================================');
-  console.log({token});
-  console.log('====================================');
+
 
   try {
     // Verify the token

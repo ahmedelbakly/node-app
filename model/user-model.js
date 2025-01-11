@@ -15,8 +15,9 @@ const userSchema = new Schema(
       required: true
     },
     role: {
-      type: String,
-      default: 'user'
+      type: Schema.Types.ObjectId,
+      ref: 'Role',
+      required: true
     },
     twoFactorAuth: {
       type: Boolean,
@@ -65,13 +66,10 @@ const userSchema = new Schema(
       ref: 'User',
       required: false
     },
-    permissions: {
-      type: {
-        add: { type: Boolean, default: true },
-        edit: { type: Boolean, default: true },
-        delete: { type: Boolean, default: true },
-        view: { type: Boolean, default: true }
-      }
+    type: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'admin'
     }
   },
 

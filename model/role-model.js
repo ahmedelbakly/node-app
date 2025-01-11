@@ -1,18 +1,35 @@
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose'
 
 const roleSchema = new Schema(
   {
     name: { type: String, required: true },
-    description: { type: String, required: true },
-    taskPermissions: {
-      type: [String],
-      required: true,
-      default: ["create", "read", "update", "delete"],
+    tasks: {
+      add: { type: Boolean, default: false },
+      read: { type: Boolean, default: false },
+      update: { type: Boolean, default: false },
+      delete: { type: Boolean, default: false },
+      
+
     },
+    roles: {
+      add: { type: Boolean, default: false },
+      read: { type: Boolean, default: false },
+      update: { type: Boolean, default: false },
+      delete: { type: Boolean, default: false }
+    },
+    users: {
+      add: { type: Boolean, default: false },
+      read: { type: Boolean, default: false },
+      update: { type: Boolean, default: false },
+      delete: { type: Boolean, default: false }
+    },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
-);
+)
 
-export default model("Role", roleSchema);
+const Role = model('Role', roleSchema)
+
+export default Role

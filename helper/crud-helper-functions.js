@@ -25,10 +25,15 @@ export const getDocuments = async (
   model,
   query,
   options = {},
-  select = null
+  select = null,
+  populate = null
 ) => {
   try {
-    return await model.find(query, select, options);
+    let findQuery = model.find(query, select, options);
+    if (populate) {
+      findQuery = findQuery.populate(populate);
+    }
+    return await findQuery;
   } catch (error) {
     throw new Error(`Error retrieving documents: ${error.message}`);
   }
@@ -41,9 +46,13 @@ export const getDocuments = async (
  * @param {String} [select=null] - Fields to include or exclude (e.g., 'name email' or '-password').
  * @returns {Promise<Object>} The retrieved document.
  */
-export const getDocumentById = async (model, id, select = null) => {
+export const getDocumentById = async (model, id, select = null, populate = null) => {
   try {
-    return await model.findById(id).select(select);
+    let query = model.findById(id).select(select);
+    if (populate) {
+      query = query.populate(populate);
+    }
+    return await query;
   } catch (error) {
     throw new Error(`Error retrieving document by ID: ${error.message}`);
   }
