@@ -45,7 +45,7 @@ export const getAllRoles = async (req, res) => {
   const { id: userId, role } = req.user
   const adminId = role === 'admin' ? userId : (await User.findById(userId))?.adminId
   try {
-    const roles = await getDocuments(Role, {createdBy: adminId}, {}, '_id name ')
+    const roles = await getDocuments(Role, {$or: [{name :"admin"}, { createdBy: adminId }] }, {}, '_id name ')
     return successResponse(res, 'Roles retrieved successfully', roles)
   } catch (error) {
     return errorResponse(res, error.message)

@@ -33,7 +33,7 @@ userRouter.get('/get-all-user-by-admin-id', isAuth, getAllUserByAdminId)
 userRouter.get('/userOnAuth', isAuth, userOnAuth)
 userRouter.get('/getUserById/:id', isAuth, getUserById)
 userRouter.put('/updateUser/:id', isAuth, updateUser)
-userRouter.delete('/deleteUser/:id', isAuth, deleteUser)
+userRouter.delete('/delete/:id', isAuth, deleteUser)
 
 
 export default userRouter

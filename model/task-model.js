@@ -10,7 +10,7 @@ const taskSchema = new Schema(
     status: {
       type: String,
       default: 'to do',
-      enum: ['to do', 'in progress', 'done']
+      enum: ['to do', 'in progress', 'completed']
     },
     userId: {
       type: Schema.Types.ObjectId,

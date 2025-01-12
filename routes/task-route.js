@@ -7,6 +7,7 @@ import {
   updateTaskById,
   deleteTaskById,
   getTasksWithQueryParams,
+  getAllTasksSearch,
 } from "../controller/task-controller.js";
 import { isAuth } from "../helper/isAuth.js";
 
@@ -45,5 +46,10 @@ taskRouter.delete("/delete/:id", deleteTaskById);
 // Endpoint: GET /task/getTasksWithQueryParams
 // Description: Retrieves tasks based on specific query parameters (e.g., filters or search criteria)
 taskRouter.get("/getTasksWithQueryParams", getTasksWithQueryParams);
+
+// Route to get all tasks with search
+// Endpoint: GET /task/get-all
+// Description: Retrieves a list of all tasks
+taskRouter.get("/get-all-search", getAllTasksSearch);
 
 export default taskRouter;
